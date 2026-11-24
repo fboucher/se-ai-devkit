@@ -1,7 +1,6 @@
 name: Release
 
-# Publishes the Agent Skill as a zip on a GitHub release, for agents other than Claude Code
-# (GitHub Copilot, Cursor, Codex: unzip into .agents/skills/; claude.ai: upload the zip).
+# Publishes the Agent Skill zip and Docs MCP wheel on a GitHub release.
 # Tag with CalVer (YYYY.MM.DD), e.g. `git tag 2026.11.09 && git push origin 2026.11.09`.
 
 on:
@@ -31,9 +30,12 @@ jobs:
       - name: Build skill zip
         run: uv run --project tools devkit skill --zip dist/building-data-platform-api.zip
 
+      - name: Build Docs MCP wheel
+        run: uv build --project tools --wheel --out-dir dist
+
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
         run: >
-          gh release create "$GITHUB_REF_NAME" dist/building-data-platform-api.zip
+          gh release create "$GITHUB_REF_NAME" dist/*
           --title "$GITHUB_REF_NAME" --generate-notes

@@ -67,6 +67,22 @@ class Entry:
 def collect(content_dir: Path) -> list[Entry]:
     content_dir = content_dir.resolve()
     entries: list[Entry] = []
+    for path in sorted(content_dir.glob("*.md")):
+        rel = path.relative_to(content_dir).as_posix()
+        page = frontmatter.parse(path.read_text(encoding="utf-8"))
+        meta = page.meta or {}
+        section = str(meta.get("section") or "Docs")
+        entries.append(
+            Entry(
+                path=f"docs/{rel}",
+                title=str(meta.get("title") or path.stem),
+                description=str(meta.get("description") or ""),
+                group=section.split(" / ")[0],
+                deprecated=meta.get("status") == "deprecated",
+                body=page.body.strip("\n"),
+                section=section,
+            )
+        )
     for area in _areas(content_dir):
         for path in _ordered_pages(content_dir / area):
             rel = path.relative_to(content_dir).as_posix()
