@@ -10,7 +10,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from devkit import __version__, llms, skill
+from devkit import __version__, docs_mcp, llms, skill
 from devkit.validate import validate_tree
 
 
@@ -83,6 +83,17 @@ def _cmd_skill(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_docs_mcp(args: argparse.Namespace) -> int:
+    try:
+        docs_root = docs_mcp.resolve_docs_root(args.docs)
+        server = docs_mcp.create_server(docs_root)
+    except (OSError, ValueError) as exc:
+        _err(str(exc))
+        return 2
+    docs_mcp.run_server(server)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="devkit", description=__doc__)
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
@@ -106,6 +117,12 @@ def build_parser() -> argparse.ArgumentParser:
     group.add_argument("--check", action="store_true", help="fail if committed files differ")
     group.add_argument("--zip", help="write the skill folder as a zip to this path instead")
     skill_cmd.set_defaults(func=_cmd_skill)
+
+    docs_mcp_cmd = sub.add_parser(
+        "docs-mcp", help="serve documentation search and page tools over stdio"
+    )
+    docs_mcp_cmd.add_argument("--docs", help="docs root (default: SE_DEVKIT_DOCS or bundled docs)")
+    docs_mcp_cmd.set_defaults(func=_cmd_docs_mcp)
     return parser
 
 

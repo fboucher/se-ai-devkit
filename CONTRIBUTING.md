@@ -13,9 +13,10 @@
 | Folder | What |
 |---|---|
 | `docs/` | The documentation published by the kit: `api/` (generated), `guides/` (authored here) |
+| `setup/` | Setup guides for people installing the kit, one page per tool. Not published to agents, so keep it out of `docs/` |
 | `public/` | Generated `llms.txt` and `llms-full` files. Do not edit; regenerate |
 | `plugins/` | Generated Agent Skill (Claude Code plugin). Do not edit; regenerate |
-| `tools/` | Python tooling: validator and generators ([tools/README.md](tools/README.md)) |
+| `tools/` | Python tooling: validator, generators and the public Docs MCP server ([tools/README.md](tools/README.md)) |
 
 ## Content rules
 
