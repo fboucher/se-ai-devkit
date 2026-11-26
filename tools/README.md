@@ -28,3 +28,16 @@ docs repo, which calls `devkit validate` and `devkit llms` in a local clone of t
 The Docs MCP server is a separate, public documentation interface; unlike the authenticated
 BDP MCP server, it does not connect to live building data. Its default docs are the snapshot
 bundled with the installed wheel; `--docs` or `SE_DEVKIT_DOCS` selects another docs tree.
+
+## Test the Docs MCP server from a checkout
+
+The server uses stdio, so you don't keep it running: register the command in your agent
+and the agent starts it. Use absolute paths, because the agent may start it from another
+folder. For example, in Claude Code:
+
+```sh
+claude mcp add --transport stdio se-devkit-docs -- uv run --project <repo>/tools devkit docs-mcp --docs <repo>/docs
+```
+
+For other agents, use the same command and arguments in the configs from
+[setup/docs-mcp-server.md](../setup/docs-mcp-server.md), with `uv` as the command.
