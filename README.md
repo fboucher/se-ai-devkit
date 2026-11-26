@@ -26,7 +26,7 @@ Platform APIs**: REST API, GraphQL API and Event Hubs.
 - **Building your own tooling or reading the docs yourself:** use the
   [agent-friendly docs](#-agent-friendly-docs) directly.
 
-All tools are generated from the same pages, so they always say the same thing.
+All tools are generated from the same pages, so they always say the same thing. Setup steps for each tool are in [`setup/`](setup/).
 
 ---
 
@@ -49,73 +49,23 @@ A single index, following the [llms.txt](https://llmstxt.org) convention, that a
 https://schneiderelectricbuildings.github.io/se-ai-devkit/llms.txt
 ```
 
-| Agent | How |
-|---|---|
-| Any agent | Start your prompt with: *"Read `<url>/llms.txt` and the pages it links to before writing code against the Building Data Platform APIs."* |
-| Claude Code | Add that sentence to your project's `CLAUDE.md` |
-| Cursor | Add the URL as a custom doc (`@Docs` → *Add new doc*), then mention it with `@` |
-| GitHub Copilot | Add that sentence to `.github/copilot-instructions.md` |
+It links every page, plus full-text bundles: all pages in one file, or one file per section for agents with a small context window.
 
-Need everything at once? `llms-full.txt` holds every page in one file, and `llms-full/<section>.txt` (for example `llms-full/rest-api.txt`) holds one section, for agents with a small context window. `llms.txt` links them all under **Full text**.
+**Set it up:** [setup/llms-txt.md](setup/llms-txt.md)
 
 ## 🧩 Agent Skill
 
-An [Agent Skill](https://agentskills.io) named `building-data-platform-api`. It bundles every page, an index, rules for using the docs (look up the page first, use documented names only, authenticate, test against UAT) and a search script. Your agent loads it only when a task involves these APIs, and finds the right page without reading everything.
+An [Agent Skill](https://agentskills.io) named `building-data-platform-api`. It bundles every page, an index, rules for using the docs (look up the page first, use documented names only, authenticate, test against UAT) and a search script. Your agent loads it only when a task involves these APIs, and finds the right page without reading everything. Works with Claude Code, GitHub Copilot, Cursor, OpenAI Codex and claude.ai.
 
-**Claude Code** (Claude Code 2.1.275 or later):
-
-```text
-/plugin install se-ai-devkit --marketplace SchneiderElectricBuildings/se-ai-devkit
-```
-
-Or in two steps: `/plugin marketplace add SchneiderElectricBuildings/se-ai-devkit`, then `/plugin install se-ai-devkit@se-ai-devkit`. Get new docs with `claude plugin update se-ai-devkit`, or turn on auto-update for this marketplace under `/plugin` → Marketplaces (it is off by default).
-
-**GitHub Copilot, Cursor, OpenAI Codex:** download `building-data-platform-api.zip` from the latest [release](../../releases/latest) and unzip it into `.agents/skills/` in your project (or `~/.agents/skills/` for all your projects).
-
-**claude.ai:** upload the same zip as a skill in your settings.
+**Set it up:** [setup/agent-skill.md](setup/agent-skill.md)
 
 ## 🔍 Docs MCP server
 
-A public, read-only [MCP](https://modelcontextprotocol.io) server that lets your agent search and browse the docs using `docs_search`, `docs_get_page` and `docs_list`. It uses stdio and needs no authentication. The bundled docs snapshot is as fresh as the latest release.
+A public, read-only [MCP](https://modelcontextprotocol.io) server that lets your agent search and browse the docs using `docs_search`, `docs_get_page` and `docs_list`. It runs locally over stdio, needs no authentication, and serves the docs snapshot of the release you install. Works with Claude Code, Claude Desktop, VS Code / GitHub Copilot, Copilot CLI and Cursor.
 
 The Docs MCP server only serves public documentation. It is **not** the separate, authenticated BDP MCP server, which accesses live building data; the two can be used side by side.
 
-Replace `<release-wheel-url>` with the wheel URL attached to a [release](../../releases/latest).
-
-**Claude Code** — run this in your project:
-
-```sh
-claude mcp add --transport stdio se-devkit-docs -- uvx --from <release-wheel-url> devkit docs-mcp
-```
-
-**VS Code / GitHub Copilot** — add this to `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "se-devkit-docs": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["--from", "<release-wheel-url>", "devkit", "docs-mcp"]
-    }
-  }
-}
-```
-
-**Cursor** — add this to `.cursor/mcp.json`:
-
-```json
-{
-  "mcpServers": {
-    "se-devkit-docs": {
-      "command": "uvx",
-      "args": ["--from", "<release-wheel-url>", "devkit", "docs-mcp"]
-    }
-  }
-}
-```
-
-By default, the server uses its bundled snapshot. To serve another docs checkout, pass `--docs <path>` or set `SE_DEVKIT_DOCS`.
+**Set it up:** [setup/docs-mcp-server.md](setup/docs-mcp-server.md)
 
 ## 🏢 Brick schema guidance
 
