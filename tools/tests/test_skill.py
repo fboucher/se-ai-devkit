@@ -82,6 +82,7 @@ def test_generates_plugin_and_skill(repo: Path) -> None:
         "references/api/rest-api/historicalvalues.md",
         "references/guides/start.md",
         "scripts/search_docs.py",
+        "scripts/search_engine.py",
     ]
     assert (skill_dir / "references/api/rest-api/authentication.md").read_bytes() == (
         repo / "docs/api/rest-api/authentication.md"

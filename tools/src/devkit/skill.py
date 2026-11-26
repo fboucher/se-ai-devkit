@@ -102,6 +102,9 @@ def generate(docs_dir: Path, cfg: SkillConfig, llms_cfg: llms.LlmsConfig) -> dic
 
     files[f"{prefix}/SKILL.md"] = render_skill_md(entries, cfg, llms_cfg).encode("utf-8")
     files[f"{prefix}/scripts/search_docs.py"] = (ASSETS / "search_docs.py").read_bytes()
+    files[f"{prefix}/scripts/search_engine.py"] = (
+        Path(__file__).resolve().parent / "search_engine.py"
+    ).read_bytes()
     for entry in entries:
         rel = entry.path.removeprefix("docs/")
         source = docs_dir / rel

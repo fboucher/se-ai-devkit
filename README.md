@@ -15,7 +15,7 @@ Platform APIs**: REST API, GraphQL API and Event Hubs.
 | 📄 | [**Agent-friendly docs**](#-agent-friendly-docs) | The official API documentation as clean markdown, one page per topic | ✅ Ready |
 | 🔗 | [**llms.txt**](#-llmstxt) | One URL that indexes every page, plus full-text bundles | ✅ Ready |
 | 🧩 | [**Agent Skill**](#-agent-skill) | All the docs plus a search tool, installed once and loaded only when needed | ✅ Ready |
-| 🔍 | [**Docs MCP server**](#-docs-mcp-server) | Search and fetch docs pages as tools in your agent | 🚧 Coming soon |
+| 🔍 | [**Docs MCP server**](#-docs-mcp-server) | Search and fetch docs pages as tools in your agent | ✅ Ready |
 | 🏢 | [**Brick schema guidance**](#-brick-schema-guidance) | How our APIs use the Brick ontology, with worked examples | 🚧 Coming soon |
 
 **Which one should I use?**
@@ -76,9 +76,46 @@ Or in two steps: `/plugin marketplace add SchneiderElectricBuildings/se-ai-devki
 
 ## 🔍 Docs MCP server
 
-> 🚧 **Coming soon.**
+A public, read-only [MCP](https://modelcontextprotocol.io) server that lets your agent search and browse the docs using `docs_search`, `docs_get_page` and `docs_list`. It uses stdio and needs no authentication. The bundled docs snapshot is as fresh as the latest release.
 
-A public, read-only [MCP](https://modelcontextprotocol.io) server that lets your agent search the docs and fetch pages as tools (`docs_search`, `docs_get_page`), without installing the docs locally. It is separate from the authenticated API MCP server, which accesses live building data; the two can be used side by side.
+The Docs MCP server only serves public documentation. It is **not** the separate, authenticated BDP MCP server, which accesses live building data; the two can be used side by side.
+
+Replace `<release-wheel-url>` with the wheel URL attached to a [release](../../releases/latest).
+
+**Claude Code** — run this in your project:
+
+```sh
+claude mcp add --transport stdio se-devkit-docs -- uvx --from <release-wheel-url> devkit docs-mcp
+```
+
+**VS Code / GitHub Copilot** — add this to `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "se-devkit-docs": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "<release-wheel-url>", "devkit", "docs-mcp"]
+    }
+  }
+}
+```
+
+**Cursor** — add this to `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "se-devkit-docs": {
+      "command": "uvx",
+      "args": ["--from", "<release-wheel-url>", "devkit", "docs-mcp"]
+    }
+  }
+}
+```
+
+By default, the server uses its bundled snapshot. To serve another docs checkout, pass `--docs <path>` or set `SE_DEVKIT_DOCS`.
 
 ## 🏢 Brick schema guidance
 
